@@ -1,4 +1,4 @@
-#include "Vector3.h"
+﻿#include "Vector3.h"
 #include "math.h"
 #include <stdlib.h>
 
@@ -6,6 +6,7 @@ Vector3::Vector3(Vector3 *v){
 	this->X = v->X;
 	this->Y = v->Y;
     this->Z = v->Z;
+	//this->index = v->index;
 }
 Vector3::Vector3(){
 	this->X = 0;
@@ -16,6 +17,7 @@ Vector3::Vector3(const Vector3 &v){
 	this->X = v.X;
 	this->Y = v.Y;
     this->Z = v.Z;
+	this->index = v.index;
 }
 Vector3::~Vector3(){
 
@@ -47,10 +49,19 @@ float Vector3::Distancef(Vector3 *v){
 
 /*
 * Compute the length of a vector
-* sqrt(x?y?
+* sqrt(x^2+y^2)
 */
 float Vector3::Length(){
 	return sqrt((float)(this->X*this->X + this->Y*this->Y + this->Z * this->Z));
+}
+Vector3 Vector3::normalize() {
+	float length = this->Length();
+	if (length != 0 && length != 1) {
+		this->X /= length;
+		this->Y /= length;
+		this->Z /= length;
+	}
+	return this;
 }
 
 /*
@@ -87,10 +98,11 @@ Vector3 Vector3::operator*(int f){
 }
 
 Vector3 Vector3::cross(Vector3 v){
-	return  Vector3(this->Y * v.Z - this->Z * v.Y,
-					this->Z * v.X - this->X * v.Z,
-					this->X * v.Y - this->Y * v.X
-					);
+	float crossX = this->Y * v.Z - v.Y * this->Z;
+	float crossY = this->Z * v.X - v.Z * this->X;
+	float crossZ = this->X * v.Y - v.X * this->Y;
+
+	return  Vector3(crossX, crossY, crossZ);
 }
 
 float Vector3::dot(Vector3 v){

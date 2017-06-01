@@ -31,5 +31,10 @@ class Vector3{
         bool operator== (Vector3);
 
 		Vector3 Rand_Vector( float, float );
+
+		Vector3 normalize();  // used in deluanay 
+        int index; //index in origin pointset. used for deluanay => voronoi
+        void setindex(int idx){index = idx;}
+        int getindex(){return index;}
 };
 #endif

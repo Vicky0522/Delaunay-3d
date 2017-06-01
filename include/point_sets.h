@@ -7,32 +7,39 @@
 #include<array>
 #include<stack>
 #include"half_edge.h"
+#include"Tetrahedron.h"
+#include"Delaunay.h"
 
 using namespace std;
 
 class PointSets3D {
 public:
-	PointSets3D() { S.clear(); }
+	PointSets3D() { S.clear(); S_id.clear(); exm_pnts.clear();
+		K.clear(); TETRA.clear(); dln.clear(); Polytope.clear(); }
 	PointSets3D( vector<Vector3> _S ) {
-		S.clear();
+		S.clear(); S_id.clear(); exm_pnts.clear();
+		K.clear(); TETRA.clear(); dln.clear(); Polytope.clear();
 		for(vector<Vector3>::iterator iter=_S.begin();
 			iter != _S.end(); iter++) 
 			S.push_back( *iter );
 	}
 	PointSets3D( Vector3 *_S, int size ) {
-		S.clear();
+		S.clear(); S_id.clear(); exm_pnts.clear();
+		K.clear(); TETRA.clear(); dln.clear(); Polytope.clear();
 		for( int i=0; i<size; i++ ) {
 			S.push_back( _S[i] );
 		}
 	}
 	void set_points( vector<Vector3> _S ) {
 		S.clear(); S_id.clear(); exm_pnts.clear();
+		K.clear(); TETRA.clear(); dln.clear(); Polytope.clear();
 		for(vector<Vector3>::iterator iter=_S.begin();
 			iter != _S.end(); iter++) 
 			S.push_back( *iter );
 	}
 	void set_points( Vector3 *_S, int size ) {
 		S.clear(); S_id.clear(); exm_pnts.clear();
+		K.clear(); TETRA.clear(); dln.clear(); Polytope.clear();
 		for( int i=0; i<size; i++ ) {
 			S.push_back( _S[i] );
 		}
@@ -50,9 +57,9 @@ public:
 	
 
 	/*construct voronoi3d by delaunay triangulation*/
-	//vector<array<int,4>> Delaunay();
-	//vector<vector<array<int,3>>> Voronoi3d( float,float,float,float);
-	//int get_Biggest_Circle();
+	vector<Tetrahedron> delaunay();
+	vector<vector<array<Vector3,3>>> Voronoi3d( Vector3,Vector3 );
+	int get_Biggest_Inscribed_Circle();
 
 
 private:
@@ -107,11 +114,11 @@ private:
 	void reverse(array<int,3>& a) {
 		int temp = a[0]; a[0] = a[2]; a[2] = temp;
 	}
-
-
-	// calculate centre of circumcircle
-	Vector3 circle_centre( Vector3,Vector3,Vector3,Vector3 );
 	
+	bool is_hit(Vector3,Vector3,Vector3,Vector3,Vector3&);
+
+
+
 
 	// S is the points set
 	vector<Vector3> S;
@@ -122,11 +129,10 @@ private:
 	vector<bool> exm_pnts; // points'label(0-in/1-out) saved 
 
 
-	// TRI is the results of triangulation returned by Delaunay()
-	vector<array<int,4>> TRI;
-	vector<float> TRI_radius;// radius of circumcircle of TRI
-	vector<Vector3> Vor_Vertex;// voronoi vertices, same indices with TRI
-	vector<vector<array<int,3>>> Polytope;//polytope returned by voronoi3d, restricted by viewport
+	// TRI is the results of triangulation returned by delaunay()
+	vector<array<int,4>> TETRA;
+	Delaunay dln;
+	vector<vector<array<Vector3,3>>> Polytope;//polytope returned by voronoi3d, restricted by viewport
 	
 
 	
@@ -134,6 +140,7 @@ private:
 };
 
 
+int convhull_demo();
 
 
 #endif

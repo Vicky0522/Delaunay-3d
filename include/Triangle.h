@@ -9,6 +9,7 @@
 #include "Line.h"
 #include <vector>
 using namespace std;
+
 class Triangle {
 public:
     Vector3 v1, v2, v3;
@@ -25,7 +26,38 @@ public:
         normal.Normalize();
         return normal;
     }
+	Vector3 getCentre() {
+		Vector3 c1 = (v1+v2)*0.5f;
+		Vector3 c2 = (v2+v3)*0.5f;
+		Vector3 c3 = (v1+v3)*0.5f;
 
+		Vector3 l1 = v2-v1;
+		Vector3 l2 = v3-v2;
+		Vector3 l3 = v1-v3;
+		
+		float c1l1 = c1.dot(l1);
+		float c2l2 = c2.dot(l2);
+		float c3l3 = c3.dot(l3);
+
+		float D = l1.X*(l2.Y*l3.Z-l2.Z*l3.Y)-
+			      l1.Y*(l2.X*l3.Z-l2.Z*l3.X)+
+				  l1.Z*(l2.X*l3.Y-l2.Y*l3.X);
+
+		float Dx= c1l1*(l2.Y*l3.Z-l2.Z*l3.Y)-
+			      l1.Y*(c2l2*l3.Z-l2.Z*c3l3)+
+				  l1.Z*(c2l2*l3.Y-l2.Y*c3l3);
+
+		float Dy= l1.X*(c2l2*l3.Z-l2.Z*c3l3)-
+			      c1l1*(l2.X*l3.Z-l2.Z*l3.X)+
+				  l1.Z*(l2.X*c3l3-c2l2*l3.X);
+
+		float Dz= l1.X*(l2.Y*c3l3-c2l2*l3.Y)-
+			      l1.Y*(l2.X*c3l3-c2l2*l3.X)+
+				  c1l1*(l2.X*l3.Y-l2.Y*l3.X);
+
+		return Vector3(Dx/D,Dy/D,Dz/D);
+	}
+	
     void turnBack() {
         Vector3 tmp = this->v3;
         this->v3 = this->v1;
@@ -53,7 +85,6 @@ public:
         }
         if (cnt == 3) return true;
         else return false;
-
     }
 };
 #endif

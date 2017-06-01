@@ -10,13 +10,14 @@
 #include "Triangle.h"
 #include <vector>
 #include <cmath>
+#include <array>
 using namespace std;
 
 class Tetrahedron {
 public:
     vector<Vector3> vertices;
-    Vector3 o;      // å¤–æ¥circle ä¸­å¿ƒ
-    float   r;      // å¤–æ¥circle åŠå¾„
+    Vector3 o;      // Íâ½Ócircle ÖĞĞÄ
+    float   r;      // Íâ½Ócircle °ë¾¶
 
     Tetrahedron(vector<Vector3> v) {
         this->vertices = v;
@@ -64,8 +65,16 @@ public:
         lines.push_back(Line(v3, v4));
         return lines;
     }
+
+	array<int,4> getVerticesIndex() {
+		array<int,4> a={vertices[0].index,
+			            vertices[1].index,
+						vertices[2].index,
+						vertices[3].index};
+		return a;
+	}
 private:
-    // å¤–æ¥circle
+    // Íâ½Ócircle
     void getCenterCircumcircle() {
         Vector3 v1 = vertices[0];
         Vector3 v2 = vertices[1];
@@ -84,7 +93,7 @@ private:
         };
         double x[3];
         if (gauss(A, b, x) == 0) {
-            //o = NULL;
+            // o = NULL;
             r = -1;
         } else {
             o = Vector3((float)x[0], (float)x[1], (float)x[2]);
@@ -92,10 +101,10 @@ private:
         }
     }
 
-    /** LUåˆ†è§£ã«ã‚ˆã‚‹æ–¹ç¨‹å¼ã®è§£æ³• **/
+    /** LU·Ö½â¤Ë¤è¤ë·½³ÌÊ½¤Î½â·¨ **/
     double lu(double a[][3], int ip[]) {
         int n = 3;//a.length;
-        double weight[n];
+        double *weight=new double[n];
 
         for(int k = 0; k < n; k++) {
             ip[k] = k;
@@ -118,14 +127,18 @@ private:
             }
             int ik = ip[m];
             if (m != k) {
-                ip[m] = ip[k]; ip[k] = ik;
+                ip[m] = ip[k];
+                ip[k] = ik;
                 det = -det;
             }
-            u = a[ik][k]; det *= u;
+            u = a[ik][k]; 
+            det *= u;
             if (u == 0) return 0;
             for (int i = k+1; i < n; i++) {
-                int ii = ip[i]; double t = (a[ii][k] /= u);
-                for(int j = k+1; j < n; j++) a[ii][j] -= t * a[ik][j];
+                int ii = ip[i]; 
+                double t = (a[ii][k] /= u);
+                for(int j = k+1; j < n; j++) 
+                    a[ii][j] -= t * a[ik][j];
             }
         }
         return det;
@@ -134,21 +147,26 @@ private:
         int n = 3;//a.length;
         for(int i = 0; i < n; i++) {
             int ii = ip[i]; double t = b[ii];
-            for (int j = 0; j < i; j++) t -= a[ii][j] * x[j];
+            for (int j = 0; j < i; j++) 
+                t -= a[ii][j] * x[j];
             x[i] = t;
         }
         for (int i = n-1; i >= 0; i--) {
-            double t = x[i]; int ii = ip[i];
-            for(int j = i+1; j < n; j++) t -= a[ii][j] * x[j];
+            double t = x[i]; 
+            int ii = ip[i];
+            for(int j = i+1; j < n; j++) 
+                t -= a[ii][j] * x[j];
             x[i] = t / a[ii][i];
         }
     }
     double gauss(double a[][3], double b[], double x[]) {
         int n = 3;//a.length;
-        int ip[n];
+        int *ip=new int[n];
         double det = lu(a, ip);
 
-        if(det != 0) { solve(a, b, ip, x);}
+        if(det != 0) {
+            solve(a, b, ip, x);
+        }
         return det;
     }
 };
