@@ -71,7 +71,6 @@ void PointSets3D::find_hull( stack<Face*> &face_stack ) {
 			e.push_back( edge[0]->dual->succ->dual );
 			e.push_back( edge[0]->dual->pred->dual );
 			envolope.push_back(edge[0]->dual->tri);
-			crop( edge[0]->dual->tri );
 		}
 		else e.push_back(edge[0]->dual);
 		if (is_on_line( S[tr2[0]],S[tr2[1]],S[tr2[2]] ) ||
@@ -79,7 +78,6 @@ void PointSets3D::find_hull( stack<Face*> &face_stack ) {
 			e.push_back( edge[1]->dual->succ->dual );
 			e.push_back( edge[1]->dual->pred->dual );
 			envolope.push_back(edge[1]->dual->tri);
-			crop( edge[1]->dual->tri );
 		}
 		else e.push_back(edge[1]->dual);
 		if (is_on_line( S[tr3[0]],S[tr3[1]],S[tr3[2]] ) ||
@@ -87,16 +85,14 @@ void PointSets3D::find_hull( stack<Face*> &face_stack ) {
 			e.push_back( edge[2]->dual->succ->dual );
 			e.push_back( edge[2]->dual->pred->dual );
 			envolope.push_back(edge[2]->dual->tri);
-			crop( edge[2]->dual->tri );
 		}
 		else e.push_back(edge[2]->dual);
 
-		crop( tri );
 		Vertex *v = new Vertex(S_id[max_id]);
 		stitch( v, e ); 
 
 		//reverse faces in envolope to kill
-		for(int i=0;i<envolope.size();i++) envolope[i]->reverse();
+		for(int i=0;i<envolope.size();i++) {crop(envolope[i]);envolope[i]->reverse();}
 
 		//generate new faces, push into stack and kill points
 		Edge *ed = v->one_edge;

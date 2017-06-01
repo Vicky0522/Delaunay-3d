@@ -10,7 +10,6 @@
 #include "Triangle.h"
 #include <vector>
 #include <cmath>
-#include <array>
 using namespace std;
 
 class Tetrahedron {
