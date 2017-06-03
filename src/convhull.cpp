@@ -64,6 +64,7 @@ void PointSets3D::find_hull( stack<Face*> &face_stack ) {
 		int v2 = edge[1]->dual->pred->v->id;
 		int v3 = edge[2]->dual->pred->v->id;
 
+		array<int,3> t;
 		// choose edges that point has to be stitched with
 		vector<Edge*> e;
 		if (is_on_line( S[tr1[0]],S[tr1[1]],S[tr1[2]] ) ||
@@ -71,6 +72,7 @@ void PointSets3D::find_hull( stack<Face*> &face_stack ) {
 			e.push_back( edge[0]->dual->succ->dual );
 			e.push_back( edge[0]->dual->pred->dual );
 			envolope.push_back(edge[0]->dual->tri);
+			t = envolope[envolope.size()-1]->getVertex(); printf("faces added to envo:%d %d %d\n",t[0],t[1],t[2]);
 		}
 		else e.push_back(edge[0]->dual);
 		if (is_on_line( S[tr2[0]],S[tr2[1]],S[tr2[2]] ) ||
@@ -78,6 +80,7 @@ void PointSets3D::find_hull( stack<Face*> &face_stack ) {
 			e.push_back( edge[1]->dual->succ->dual );
 			e.push_back( edge[1]->dual->pred->dual );
 			envolope.push_back(edge[1]->dual->tri);
+			t = envolope[envolope.size()-1]->getVertex(); printf("faces added to envo:%d %d %d\n",t[0],t[1],t[2]);
 		}
 		else e.push_back(edge[1]->dual);
 		if (is_on_line( S[tr3[0]],S[tr3[1]],S[tr3[2]] ) ||
@@ -85,18 +88,53 @@ void PointSets3D::find_hull( stack<Face*> &face_stack ) {
 			e.push_back( edge[2]->dual->succ->dual );
 			e.push_back( edge[2]->dual->pred->dual );
 			envolope.push_back(edge[2]->dual->tri);
+			t = envolope[envolope.size()-1]->getVertex(); printf("faces added to envo:%d %d %d\n",t[0],t[1],t[2]);
 		}
 		else e.push_back(edge[2]->dual);
 
-		Vertex *v = new Vertex(S_id[max_id]);
-		stitch( v, e ); 
+		for(int i=0;i<envolope.size();i++) {
+			t = envolope[i]->getVertex();
+			printf("faces in envo before crop and reverse:%d %d %d\n",t[0],t[1],t[2]);
+			//crop(envolope[i]);envolope[i]->reverse();
+		}
 
 		//reverse faces in envolope to kill
-		for(int i=0;i<envolope.size();i++) {crop(envolope[i]);envolope[i]->reverse();}
+		for(int i=0;i<envolope.size();i++) {
+			t = envolope[i]->getVertex();
+			printf("faces in envo before stitch:%d %d %d\n",t[0],t[1],t[2]);
+			crop(envolope[i]);envolope[i]->reverse();
+		}
 
-		//generate new faces, push into stack and kill points
+		Vertex *v = new Vertex(S_id[max_id]);
+		printf("edges to be stitched:\n");
+		for(int i=0;i<e.size();i++) printf("%d\n",e[i]->v->id);
+		
+		stitch( v, e ); 
+
+		for(int i=0;i<envolope.size();i++) {
+			t = envolope[i]->getVertex();
+			printf("faces in envo after stitch:%d %d %d\n",t[0],t[1],t[2]);
+			//crop(envolope[i]);envolope[i]->reverse();
+		}
+
 		Edge *ed = v->one_edge;
 		do {
+			t = ed->tri->getVertex(); printf("new faces after stitch:%d %d %d\n",t[0],t[1],t[2]);
+			ed = ed->pred->dual;
+		}
+		while(ed!=v->one_edge);
+		
+		ed = v->one_edge;
+		do {
+			t = ed->tri->getVertex(); printf("new faces after stitch:%d %d %d\n",t[0],t[1],t[2]);
+			ed = ed->pred->dual;
+		}
+		while(ed!=v->one_edge);
+
+		//generate new faces, push into stack and kill points
+		ed = v->one_edge;
+		do {
+			t = ed->tri->getVertex(); printf("new faces:%d %d %d\n",t[0],t[1],t[2]);
 			face_stack.push(ed->tri);
 			envolope.push_back( ed->tri );
 			ed = ed->pred->dual;

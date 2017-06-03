@@ -6,16 +6,17 @@
 
 void stitch( Vertex *v, vector<Edge*> &e ) {
 	// remove back path
-	vector<Edge*>::iterator iter;
-	int i=0;
-	while( i<e.size() ) {
-		if(e[i]->dual==e[(i+1)%e.size()]) {
-			e.erase(e.begin()+i);
-			e.erase(e.begin()+i%e.size());
-			if(i) i--;
-		}
-		else i++;
-	}
+	//vector<Edge*>::iterator iter;
+	//int i=0;
+	//while( i<e.size() ) {
+		//if(e[i]->dual==e[(i+1)%e.size()]) {
+			//e.erase(e.begin()+i);
+			//e.erase(e.begin()+i%e.size());
+			//if(i) i--;
+		//}
+		//else i++;
+	//}
+	array<int,3> t;
 	for(int i=0;i<e.size();i++) {
 		e[i]->dual = new Edge();
 		e[i]->dual->set(e[i],new Edge(),new Edge(),new Face(),e[i]->succ->v);
@@ -29,23 +30,28 @@ void stitch( Vertex *v, vector<Edge*> &e ) {
 		e[i]->dual->succ->v = e[i]->v;
 		e[i]->dual->pred->v = v;
 		if (v->one_edge==NULL) v->one_edge=e[i]->dual->pred;
-		if (e[i]->v->one_edge==NULL) e[i]->v->one_edge=e[i];
+		e[i]->v->one_edge=e[i];
+		t = e[i]->dual->tri->getVertex(); printf("new faces when stitching 1:%d %d %d\n",t[0],t[1],t[2]);
 	}
 	for(int i=0;i<e.size();i++) {
 		e[i]->dual->succ->dual=e[(i+1)%e.size()]->dual->pred;
 		e[(i+1)%e.size()]->dual->pred->dual=e[i]->dual->succ;
+		t = e[i]->dual->tri->getVertex(); printf("new faces when stitching 2:%d %d %d\n",t[0],t[1],t[2]);
 	}
-
+	
 }
 
 // crop off facet tri
 void crop( Face *tri ) {
+	array<int,3> a = tri->getVertex();printf("vertices before crop:%d %d %d",a[0],a[1],a[2]);
 	Edge *e = tri->one_edge;
 	for(int i=0;i<3;i++) {
 		if(e->dual==NULL) {e=e->succ;continue;}
+		e->dual->dual=NULL;
 		e->dual=NULL;
 		e=e->succ;
 	}
+	a = tri->getVertex();printf("vertices after crop:%d %d %d",a[0],a[1],a[2]);
 }
 
 // delete facet tri

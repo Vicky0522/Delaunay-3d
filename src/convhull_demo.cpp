@@ -11,17 +11,22 @@ using namespace std;
 
 int convhull_demo() {
 	srand((unsigned)time(0));
-	vector<Vector3> s;
-	/*Vector3 s[6] = {Vector3(0,0,0),Vector3(1,0,0),
-		            Vector3(1,1,0),Vector3(0,1,0),
+	//vector<Vector3> s;
+	Vector3 s[8] = {Vector3(0,0,0),Vector3(1,0,0),
+		            Vector3(0,1,0),Vector3(0,0,1),
+					Vector3(0.3f,0.3f,0.3f),
 					Vector3(0.5f,0.5f,0.5f),
-	                Vector3(0.5f,0.5f,-0.5f),
-	};*/
-	Vector3 v;
-	for(int i=0;i<8;i++) s.push_back( v.Rand_Vector(0,10) );
+					Vector3(0.5f,0.5f,1.5f),
+					Vector3(0.3f,0.8f,0.8f)
+	                
+	};
+	//Vector3 v;
+	//for(int i=0;i<8;i++) s.push_back( v.Rand_Vector(0,10) );
 
-	PointSets3D PS( s ); 
+	PointSets3D PS( s,8 ); 
 
+	// print S
+	for(int i=0;i<8;i++) printf("(%f %f %f)\n",s[i].X,s[i].Y,s[i].Z);
     vector<array<int,3>>K = PS.Quick_Hull3D();
 
 	// print K

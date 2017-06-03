@@ -51,9 +51,12 @@ public:
 		return a;
 	}
 	void reverse() {
-		int v = one_edge->succ->v->id;
-		one_edge->succ->v->id=one_edge->pred->v->id;
-		one_edge->pred->v->id=v;
+		array<int,3> a;
+		a = getVertex();printf("vertices before reverse:%d %d %d",a[0],a[1],a[2]);
+		Vertex *v = one_edge->succ->v;
+		one_edge->succ->v=one_edge->pred->v;
+		one_edge->pred->v=v;
+		a = getVertex();printf("vertices after reverse:%d %d %d",a[0],a[1],a[2]);
 	}
 };
 

@@ -9,6 +9,7 @@
 
 #include "Triangle.h"
 #include <vector>
+#include <array>
 #include <cmath>
 using namespace std;
 
