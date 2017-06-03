@@ -142,5 +142,7 @@ private:
 
 int convhull_demo();
 
+int voronoi3d_demo();
+
 
 #endif

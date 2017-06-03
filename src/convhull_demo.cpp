@@ -12,6 +12,9 @@ using namespace std;
 int convhull_demo() {
 	srand((unsigned)time(0));
 	//vector<Vector3> s;
+	Triangle TT = Triangle(Vector3(0,0,0),Vector3(1,0,0),
+		            Vector3(0,1,0));
+	printf("center %f %f %f\n",TT.o.X,TT.o.Y,TT.o.Z);
 	Vector3 s[8] = {Vector3(0,0,0),Vector3(1,0,0),
 		            Vector3(0,1,0),Vector3(0,0,1),
 					Vector3(0.3f,0.3f,0.3f),

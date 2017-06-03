@@ -1,5 +1,5 @@
 #include "point_sets.h"
 
 int main() {
-	return convhull_demo();
+	return voronoi3d_demo();
 }
